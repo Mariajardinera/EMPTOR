@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Emptor · Asistente IA de Ley del Consumidor Chile</title>
+    
+    <!-- Google AdSense (solo contextual) -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3963223575032620"
+     crossorigin="anonymous"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='48' fill='%231e3c72'/%3E%3Ctext x='50' y='72' font-size='52' text-anchor='middle' fill='%23f97316' font-weight='bold'%3E⚖%3C/text%3E%3C/svg%3E">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --trust-blue: #1e3c72;
+            --trust-blue-light: #2a5298;
+            --action-orange: #f97316;
+            --action-orange-dark: #ea580c;
+            --success-green: #10b981;
+            --warning-amber: #f59e0b;
+            --danger-red: #ef4444;
+            --text-dark: #1e293b;
+            --text-gray: #64748b;
+            --bg-light: #f8fafc;
+            --bg-card: #ffffff;
+            --border-light: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--trust-blue) 0%, var(--trust-blue-light) 100%);
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .chatbot-avatar svg { width: 60px; height: 60px; }
+        .header-text { flex: 1; }
+        .chatbot-title { font-size: 1.6rem; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .chatbot-subtitle { opacity: 0.9; font-size: 0.85rem; margin-top: 4px; }
+        .badge { 
+            background: rgba(255,255,255,0.2); 
+            display: inline-block; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
+            font-size: 11px; 
+            margin-top: 8px;
+        }
+        
+        .adsense-container {
+            text-align: center;
+            padding: 15px 20px;
+            background: var(--bg-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+        .adsense-label {
+            font-size: 10px;
+            color: var(--text-gray);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .aviso-importante {
+            background: #e0f2fe;
+            border-left: 4px solid var(--action-orange);
+            padding: 12px 20px;
+            margin: 15px 20px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #0c4a6e;
+            line-height: 1.5;
+        }
+        
+        .aviso-importante a {
+            color: var(--action-orange);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .ia-warning {
+            background: #fef3c7;
+            border-left: 4px solid var(--warning-amber);
+            padding: 10px 15px;
+            margin: 0 20px 15px 20px;
+            border-radius: 8px;
+            font-size: 11px;
+            color: #92400e;
+        }
+        
+        .main-content { display: flex; min-height: 550px; }
+        
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-right: 1px solid var(--border-light);
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .sidebar h3 { 
+            font-size: 14px; 
+            margin-bottom: 15px; 
+            color: var(--trust-blue); 
+            text-transform: uppercase; 
+        }
+        
+        .categories-list { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        
+        .cat-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            padding: 10px 12px;
+            text-align: left;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+            color: var(--text-dark);
+        }
+        
+        .cat-btn i { margin-right: 8px; width: 20px; color: var(--action-orange); }
+        .cat-btn:hover { 
+            background: linear-gradient(135deg, var(--action-orange) 0%, var(--action-orange-dark) 100%);
+            color: white; 
+            transform: translateX(5px);
+        }
+        .cat-btn:hover i { color: white; }
+        
+        .suggestions {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-light);
+        }
+        
+        .suggestions h4 { font-size: 11px; color: var(--text-gray); margin-bottom: 10px; }
+        
+        .suggestion-btn {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 11px;
+            margin: 3px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-dark);
+        }
+        
+        .suggestion-btn:hover { 
+            background: var(--action-orange); 
+            color: white; 
+            transform: scale(1.02);
+        }
+        
+        .chat-area { flex: 1; display: flex; flex-direction: column; background: var(--bg-card); }
+        
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 450px;
+            background: var(--bg-light);
+        }
+        
+        .message { display: flex; gap: 12px; margin-bottom: 20px; animation: fadeIn 0.3s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .bot-message .message-avatar {
+            background: linear-gradient(135deg, var(--trust-blue) 0%, var(--action-orange) 100%);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .user-message { flex-direction: row-reverse; }
+        
+        .user-message .message-avatar {
+            background: var(--action-orange);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        
+        .message-content {
+            padding: 10px 14px;
+            border-radius: 18px;
+            max-width: 75%;
+            line-height: 1.5;
+            font-size: 13px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        .bot-message .message-content {
+            background: var(--bg-card);
+            border: 1px solid var(--border-light);
+            border-bottom-left-radius: 4px;
+        }
+        
+        .user-message .message-content {
+            background: var(--action-orange);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        
+        .typing-dots { display: inline-flex; align-items: center; gap: 4px; margin-right: 8px; }
+        .typing-dots span {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--action-orange);
+            animation: typing 1.4s infinite;
+        }
+        .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes typing {
+            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+            30% { transform: translateY(-8px); opacity: 1; }
+        }
+        
+        .feedback-buttons {
+            margin-top: 8px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .feedback-btn {
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--text-gray);
+            padding: 4px 8px;
+            border-radius: 15px;
+            transition: all 0.2s;
+        }
+        
+        .feedback-btn-like:hover { 
+            color: var(--success-green); 
+            background: #d1fae5; 
+        }
+        .feedback-btn-dislike:hover { 
+            color: var(--danger-red); 
+            background: #fee2e2;
+        }
+        .feedback-btn-disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .chat-input-container {
+            padding: 15px 20px;
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-card);
+        }
+        
+        #userInput {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid var(--border-light);
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            resize: vertical;
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        
+        #userInput:focus { 
+            outline: none; 
+            border-color: var(--action-orange);
+            box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+        }
+        
+        .input-actions { display: flex; gap: 10px; }
+        
+        .send-btn, .clear-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .send-btn { 
+            background: linear-gradient(135deg, var(--action-orange) 0%, var(--action-orange-dark) 100%);
+            color: white; 
+            flex: 1; 
+        }
+        .send-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 4px 12px rgba(249,115,22,0.4);
+        }
+        
+        .clear-btn { 
+            background: var(--bg-light); 
+            color: var(--text-dark);
+            border: 1px solid var(--border-light);
+        }
+        .clear-btn:hover { 
+            background: var(--danger-red);
+            color: white;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 12px;
+            color: var(--text-gray);
+            border-top: 1px solid var(--border-light);
+            background: var(--bg-card);
+        }
+        
+        .footer a {
+            color: var(--action-orange);
+            text-decoration: none;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        .privacy-float-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 1000;
+            background: linear-gradient(135deg, var(--trust-blue) 0%, var(--trust-blue-light) 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 10px 18px;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(30,60,114,0.3);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+        
+        .privacy-float-btn:hover {
+            background: linear-gradient(135deg, var(--action-orange) 0%, var(--action-orange-dark) 100%);
+            transform: scale(1.02);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: var(--bg-card);
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            border-radius: 20px;
+            padding: 25px;
+            overflow-y: auto;
+        }
+        
+        .modal-content h3 {
+            color: var(--trust-blue);
+            margin-bottom: 15px;
+        }
+        
+        .modal-content h4 {
+            color: var(--action-orange-dark);
+            margin: 15px 0 8px 0;
+        }
+        
+        .modal-content p {
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+        
+        .close-modal {
+            background: linear-gradient(135deg, var(--action-orange) 0%, var(--action-orange-dark) 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 20px;
+            width: 100%;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content { flex-direction: column; }
+            .sidebar { width: 100%; max-height: 200px; overflow-x: auto; padding: 10px; }
+            .categories-list { flex-direction: row; flex-wrap: nowrap; gap: 8px; overflow-x: auto; }
+            .cat-btn { white-space: nowrap; flex: 0 0 auto; }
+            .suggestions { display: flex; flex-wrap: wrap; gap: 5px; }
+            .message-content { max-width: 85%; }
+            .chatbot-title { font-size: 1.2rem; }
+            .header { padding: 15px 20px; }
+            .privacy-float-btn { padding: 8px 14px; font-size: 10px; bottom: 15px; left: 15px; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="header">
+        <div class="chatbot-avatar">
+            <svg viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" fill="url(#emptorGradient)"/>
+                <defs>
+                    <linearGradient id="emptorGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#1e3c72"/>
+                        <stop offset="50%" style="stop-color:#f97316"/>
+                        <stop offset="100%" style="stop-color:#1e3c72"/>
+                    </linearGradient>
+                </defs>
+                <text x="50" y="72" font-size="52" text-anchor="middle" fill="white" font-weight="bold">⚖️</text>
+            </svg>
+        </div>
+        <div class="header-text">
+            <div class="chatbot-title">Emptor 🇨🇱</div>
+            <div class="chatbot-subtitle">Asistente IA de Ley del Consumidor · Chile</div>
+            <div class="badge">📜 Ley 19.496 · Circulares SERNAC · Jurisprudencia</div>
+        </div>
+    </div>
+    
+    <div class="adsense-container">
+        <div class="adsense-label">📢 Publicidad contextual</div>
+        <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-3963223575032620" data-ad-slot="XXXXXXXXXX" data-ad-format="auto" data-full-width-responsive="true"></ins>
+        <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+    </div>
+    
+    <div class="aviso-importante">
+        <strong>⚖️ Aviso legal:</strong><br>
+        Este chatbot tiene fines <strong>educativos e informativos</strong>. Sus respuestas se basan en la Ley 19.496 (LPC), circulares del SERNAC y jurisprudencia real. No constituye asesoría legal personalizada.<br><br>
+        📌 Para reclamos oficiales o consultas vinculantes, acude al <strong>SERNAC</strong>: <a href="https://www.sernac.cl" target="_blank">www.sernac.cl</a> o a un abogado especializado.
+    </div>
+    
+    <div class="ia-warning">
+        <strong>🤖 Transparencia IA:</strong> Estás interactuando con un sistema de inteligencia artificial. Las respuestas pueden contener errores o no estar actualizadas. Verifica siempre con fuentes oficiales.
+    </div>
+
+    <div class="main-content">
+        <div class="sidebar">
+            <h3><i class="fas fa-gavel"></i> Categorías</h3>
+            <div class="categories-list">
+                <button class="cat-btn" data-category="garantias"><i class="fas fa-box"></i> 1. Garantía legal</button>
+                <button class="cat-btn" data-category="clausulas-abusivas"><i class="fas fa-file-signature"></i> 2. Cláusulas abusivas</button>
+                <button class="cat-btn" data-category="servicios-financieros"><i class="fas fa-chart-line"></i> 3. Servicios financieros</button>
+                <button class="cat-btn" data-category="comercio-electronico"><i class="fas fa-laptop"></i> 4. Comercio electrónico</button>
+                <button class="cat-btn" data-category="servicios-basicos"><i class="fas fa-tint"></i> 5. Agua, luz, gas</button>
+                <button class="cat-btn" data-category="procedimiento"><i class="fas fa-balance-scale"></i> 6. Cómo reclamar</button>
+                <button class="cat-btn" data-category="sernac-circulares"><i class="fas fa-building"></i> 7. Circulares SERNAC</button>
+                <button class="cat-btn" data-category="fallos"><i class="fas fa-gavel"></i> 8. Fallos recientes</button>
+            </div>
+            
+            <div class="suggestions">
+                <h4><i class="fas fa-lightbulb"></i> Consultas frecuentes</h4>
+                <button class="suggestion-btn" onclick="sendQuick('¿Cuánto tiempo tengo para cambiar un producto defectuoso?')">📦 Plazo garantía legal</button>
+                <button class="suggestion-btn" onclick="sendQuick('¿Qué dice la circular SERNAC sobre cláusulas abusivas?')">📜 Cláusulas abusivas</button>
+                <button class="suggestion-btn" onclick="sendQuick('Corte de luz por 8 horas, ¿me indemnizan?')">💡 Corte de suministro</button>
+                <button class="suggestion-btn" onclick="sendQuick('¿Qué hago si una tienda online no me respeta la garantía?')">🛒 E-commerce</button>
+                <button class="suggestion-btn" onclick="sendQuick('Multas por infracción a la LPC')">💰 Monto de multas</button>
+            </div>
+        </div>
+        
+        <div class="chat-area">
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">
+                    <div class="message-avatar">⚖️</div>
+                    <div class="message-content">
+                        <strong>👋 ¡Hola! Soy Emptor</strong>, tu asistente especializado en <strong>derecho del consumidor chileno</strong>.<br><br>
+                        🇨🇱 Consulta sobre la <strong>Ley 19.496</strong>, circulares del <strong>SERNAC</strong> o fallos de tribunales.<br>
+                        📚 Respuestas basadas en fuentes oficiales y actualizadas a mayo 2026.<br>
+                        🧠 Recuerdo toda la conversación.<br><br>
+                        ✅ <strong>Escribe tu pregunta</strong> o selecciona una categoría.<br><br>
+                        <small>📊 <strong>Valora mis respuestas</strong> con 👍 o 👎.</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chat-input-container">
+                <textarea id="userInput" placeholder="Ej: ¿Cuál es el plazo para ejercer la garantía legal en un producto nuevo?" rows="2"></textarea>
+                <div class="input-actions">
+                    <button id="sendBtn" class="send-btn"><i class="fas fa-paper-plane"></i> Enviar</button>
+                    <button id="clearBtn" class="clear-btn"><i class="fas fa-trash-alt"></i> Limpiar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer">
+        🗓️ Fuentes actualizadas a mayo 2026: Ley 19.496, Circulares SERNAC, fallos de Cortes.<br>
+        <a id="privacyLinkFooter">📋 Política de Privacidad</a> — <strong>No recopilamos datos personales identificables</strong>.
+    </div>
+</div>
+
+<button id="privacyFloatBtn" class="privacy-float-btn">📋 Política de Privacidad</button>
+
+<div id="privacyModal" class="modal">
+    <div class="modal-content">
+        <h3>📋 Política de Privacidad de Emptor</h3>
+        <p><strong>Última actualización: Mayo 2026</strong></p>
+        <h4>1. Responsable</h4>
+        <p>Maria Jardinera · <strong>miegana@hotmail.com</strong></p>
+        <h4>2. Datos tratados</h4>
+        <p>Preguntas del chat, IP (logs de seguridad), historial de sesión (10 mensajes).</p>
+        <h4>3. Finalidad</h4>
+        <p>Responder consultas y mejorar el servicio. No se usa publicidad personalizada.</p>
+        <h4>4. Terceros</h4>
+        <p>OpenRouter (procesa preguntas para generar respuestas).</p>
+        <h4>5. Derechos</h4>
+        <p>Acceso, rectificación, supresión: escribe a <strong>miegana@hotmail.com</strong>.</p>
+        <button class="close-modal" onclick="closePrivacyModal()">Cerrar</button>
+    </div>
+</div>
+
+<script>
+    function openPrivacyModal() { document.getElementById('privacyModal').style.display = 'flex'; }
+    function closePrivacyModal() { document.getElementById('privacyModal').style.display = 'none'; }
+    document.getElementById('privacyFloatBtn').onclick = openPrivacyModal;
+    document.getElementById('privacyLinkFooter').onclick = openPrivacyModal;
+    window.onclick = function(event) { if (event.target === document.getElementById('privacyModal')) closePrivacyModal(); }
+    
+    let currentCategory = null;
+    let lastUserQuestion = '';
+    let isWaitingForResponse = false;
+    const chatMessages = document.getElementById('chatMessages');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    
+    function sendQuick(text) { userInput.value = text; sendMessage(); }
+    
+    function showTyping() {
+        const typingDiv = document.createElement('div');
+        typingDiv.className = 'message bot-message';
+        typingDiv.id = 'typingIndicator';
+        typingDiv.innerHTML = `<div class="message-avatar">⚖️</div><div class="message-content"><div class="typing-dots"><span></span><span></span><span></span></div><span style="font-size:11px; color:#64748b;">Emptor está analizando tu consulta...</span></div>`;
+        chatMessages.appendChild(typingDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    function hideTyping() { const t = document.getElementById('typingIndicator'); if (t) t.remove(); }
+    
+    function addMessage(role, content) {
+        const div = document.createElement('div');
+        div.className = `message ${role === 'user' ? 'user-message' : 'bot-message'}`;
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.innerHTML = role === 'user' ? '<i class="fas fa-user"></i>' : '⚖️';
+        const msgDiv = document.createElement('div');
+        msgDiv.className = 'message-content';
+        if (role === 'bot') { try { msgDiv.innerHTML = marked.parse(content); } catch(e) { msgDiv.innerHTML = content.replace(/\n/g, '<br>'); } }
+        else { msgDiv.innerHTML = content.replace(/\n/g, '<br>'); }
+        div.appendChild(avatar);
+        div.appendChild(msgDiv);
+        if (role === 'bot') {
+            const fb = document.createElement('div');
+            fb.className = 'feedback-buttons';
+            const like = document.createElement('button');
+            like.innerHTML = '👍 Útil';
+            like.className = 'feedback-btn feedback-btn-like';
+            const dislike = document.createElement('button');
+            dislike.innerHTML = '👎 No útil';
+            dislike.className = 'feedback-btn feedback-btn-dislike';
+            like.onclick = () => { fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'like', question: lastUserQuestion, answer: content, timestamp: new Date().toISOString() }) }); like.innerHTML = '✅ ¡Gracias!'; like.disabled = true; dislike.disabled = true; like.classList.add('feedback-btn-disabled'); dislike.classList.add('feedback-btn-disabled'); };
+            dislike.onclick = () => { fetch('/api/feedback', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: 'dislike', question: lastUserQuestion, answer: content, timestamp: new Date().toISOString() }) }); dislike.innerHTML = '😔 Gracias'; like.disabled = true; dislike.disabled = true; like.classList.add('feedback-btn-disabled'); dislike.classList.add('feedback-btn-disabled'); };
+            fb.appendChild(like); fb.appendChild(dislike);
+            msgDiv.appendChild(fb);
+        }
+        chatMessages.appendChild(div);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+    
+    async function askEmptor(question, categoryId) {
+        const context = categoryId ? `Categoría: ${categoryId}. ` : '';
+        try {
+            const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: [{ role: 'user', content: context + question }] }) });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error);
+            return data.choices[0].message.content;
+        } catch(err) { return `❌ Error: ${err.message}. Intenta de nuevo más tarde.`; }
+    }
+    
+    async function sendMessage() {
+        if (isWaitingForResponse) return;
+        const q = userInput.value.trim();
+        if (!q) return;
+        lastUserQuestion = q;
+        addMessage('user', q);
+        userInput.value = '';
+        isWaitingForResponse = true;
+        showTyping();
+        const answer = await askEmptor(q, currentCategory);
+        hideTyping();
+        addMessage('bot', answer);
+        isWaitingForResponse = false;
+    }
+    
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentCategory = btn.dataset.category;
+            document.querySelectorAll('.cat-btn').forEach(b => b.style.background = 'white');
+            btn.style.background = '#e0e7ff';
+            addMessage('bot', `📌 Has activado la categoría: <strong>${btn.innerText}</strong>.`);
+        });
+    });
+    
+    sendBtn.addEventListener('click', sendMessage);
+    clearBtn.addEventListener('click', async () => { chatMessages.innerHTML = ''; await fetch('/api/clear-history', { method: 'POST' }); addMessage('bot', '🧹 Chat limpio. ¡Emptor está listo!'); });
+    userInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+</script>
+</body>
+</html>
