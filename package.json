@@ -7,10 +7,12 @@
     "start": "node serveremptor.js"
   },
   "dependencies": {
+    "@wzrdteam/search": "^1.0.4",
     "cors": "^2.8.5",
     "dotenv": "^2.0.0",
     "express": "^4.18.2",
     "express-session": "^1.17.3",
-    "node-fetch": "^2.6.7"
+    "node-fetch": "^2.6.7",
+    "open-websearch": "^2.1.10"
   }
 }
