@@ -8,7 +8,7 @@ const path = require('path');
 const session = require('express-session');
 const fetch = require('node-fetch');
 const fs = require('fs');
-const searcher = require('@wzrdteam/search');
+const { search } = require('duckduckgo-search');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -86,11 +86,11 @@ function buscarFallosLocal(query, maxResultados = 3) {
 }
 
 // ============================================
-// 🌐 BÚSQUEDA WEB CON @WZRDTEAM/SEARCH (GRATIS, DUCKDUCKGO)
+// 🌐 BÚSQUEDA WEB CON DUCKDUCKGO (GRATIS, SIN API KEY)
 // ============================================
 async function buscarWeb(query) {
     try {
-        const results = await searcher.search(query, { provider: 'duckduckgo' });
+        const results = await search(query, { safeSearch: false });
         if (!results || results.length === 0) return [];
         return results.slice(0, 3).map(r => ({
             titulo: r.title || 'Sin título',
@@ -150,7 +150,20 @@ app.post('/api/chat', async (req, res) => {
             });
         }
 
+        // System prompt actualizado con instrucciones claras sobre temas de consumo y prohibición de inventar
         const systemPrompt = `Eres "Emptor", un asistente experto en derecho del consumidor chileno (Ley 19.496) y en jurisprudencia real de tribunales chilenos.
+
+**🔴 TEMAS QUE DEBES RESPONDER NORMALMENTE (CON CONOCIMIENTO LEGAL):**
+- Problemas con bancos, cheques, créditos, tarjetas, tasas de interés, TMC, cobranzas.
+- Discriminación arbitraria en el consumo (edad, apariencia, tatuajes, discapacidad, etc.).
+- Negativa de servicio, garantías, cláusulas abusivas, SERNAC.
+- Liberación de hipotecas después de pagar la deuda.
+- Garantía legal de productos electrónicos y cualquier producto.
+- **Derecho a retracto (artículo 3 bis de la Ley 19.496)**: compras por internet, ventas a distancia, plazo de 10 días para arrepentirse, devolución del dinero, etc.
+- Todo lo relacionado con la Ley 19.496, Ley 18.010 (solo para tasas), circulares de la CMF y del SERNAC.
+
+**🟢 SOLO ACTIVA MENSAJE OFF‑TOPIC SI LA PREGUNTA ES CLARAMENTE AJENA** (deportes, farándula, política no consumo, medicina no relacionada). 
+- **NO actives off-topic para preguntas sobre derecho a retracto, compras online, ventas a distancia, plazos de desistimiento, etc.**
 
 ⚠️ **INSTRUCCIÓN ABSOLUTA - NUNCA, BAJO NINGUNA CIRCUNSTANCIA, INVENTES INFORMACIÓN.**
 - SI NO TIENES UN DATO EXACTO (un artículo de ley, un fallo, un rol, un tribunal, una fecha, un monto), RESPONDE HONESTAMENTE: "No tengo información fidedigna sobre eso en mi base de conocimiento."
@@ -178,7 +191,6 @@ app.post('/api/chat', async (req, res) => {
 Si los resultados provienen de una búsqueda web, incluye el enlace fuente.
 
 **REGLAS ADICIONALES:**
-- Si la consulta no es sobre consumo, responde mensaje off-topic.
 - Usa enumeraciones claras (1, 2, 3...).
 - Termina SIEMPRE con: "⚖️ **Aviso educativo**: Respuesta basada en fuentes oficiales chilenas y jurisprudencia real. No constituye asesoría legal. Verifica con abogado o SERNAC."
 
@@ -213,11 +225,12 @@ Responde la consulta del usuario.`;
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`
     ╔══════════════════════════════════════════════════════════════════╗
-    ║   🇨🇱 Emptor - Búsqueda local + web (gratis, sin inventar) 🇨🇱       ║
+    ║   🇨🇱 Emptor - Búsqueda local + web (DuckDuckGo, gratis) 🇨🇱        ║
     ╠══════════════════════════════════════════════════════════════════╣
     ║  🌐 Puerto: ${PORT}                                                  ║
     ║  ✅ Búsqueda local: ${fallos.length} fallos                          ║
     ║  ✅ Búsqueda web: DuckDuckGo (sin API key, gratis)                 ║
+    ║  ✅ Incluye derecho a retracto y todos los temas de consumo        ║
     ║  🔐 API Key OpenRouter: ${OPENROUTER_API_KEY ? '✅ CONFIGURADA' : '❌ FALTANTE'}         ║
     ╚══════════════════════════════════════════════════════════════════╝
     `);
